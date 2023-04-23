@@ -75,4 +75,26 @@ public class UserIService implements UserDAO{
         };
         return jdbcTemplate.query(sql,rowMapper);
     }
+
+    @Override
+    public User verification(String username) {
+        String sql="SELECT * FROM \"users\" where \"username\"='"+username+"'";
+        ResultSetExtractor<User> extractor= new ResultSetExtractor<User>() {
+            @Override
+            public User extractData(ResultSet rs) throws SQLException, DataAccessException {
+
+                if(rs.next()){
+                    Integer id= rs.getInt("id");
+                    String username= rs.getString("username");
+                    String password= rs.getString("password");
+                    Integer rol= rs.getInt("rol");
+
+                    return new User(id,username,password,rol);
+                }
+
+                return null;
+            }
+        };
+        return  jdbcTemplate.query(sql,extractor);
+    }
 }

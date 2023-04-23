@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of Mangas</title>
+    <title>Lista de Usuarios</title>
   <link rel="stylesheet" href="webjars/bootstrap/5.0.2/css/bootstrap.min.css" />
   <script src="webjars/bootstrap/5.0.2/js/bootstrap.min.js"></script>
   <link rel="stylesheet"
@@ -14,21 +14,18 @@
 
       <div class="container-fluid p-0 min-vh-100">
         <div class="d-flex text-center  w-100 h-100">
-          <div class="bg-dark" style="width: 20%; min-height: 100vh;" >
+          <div class="bg-primary" style="width: 20%; min-height: 100vh;" >
             <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white ">
-              <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto
+              <a th:href="@{users}" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto
                   text-white text-decoration-none">
                 <span class="fs-5 d-none d-sm-inline">User App</span>
               </a>
               <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                <li class="nav-item"><a th:href="@{practicaMensajes}"
-                                        class="nav-link align-middle px-0"> <i class="fs-4 bi-chat"></i>
-                  <span class="ms-1 d-none d-sm-inline">Mensajes</span>
-                </a></li>
-                <li><a id="MnEstudiante" th:href="@{condiciones}"
+
+                <li><a id="MnUsers" th:href="@{users}"
                        class="nav-link px-0 align-middle">
-                  <i class="fs-4 bi-people"></i>
-                  <span class="ms-1 d-none d-sm-inline">Condición</span></a>
+                  <i class="fs-4 bi-people text-white"></i>
+                  <span class="ms-1 d-none d-sm-inline text-white">Usuarios</span></a>
                 </li>
               </ul>
               <hr>
@@ -40,8 +37,24 @@
           <div style="width: 80%">
             <div class="container-fluid">
               <div class="p-2">
-                <h2>📜 Users</h2>
-                <table class="table table-striped">
+                <nav class="navbar navbar-light bg-light">
+                  <div class="w-100 d-flex justify-content-lg-end align-items-center">
+<!--                    <a class="navbar-brand" href="#">Navbar</a>-->
+                    <div class="d-flex align-items-center">
+                      <span class="m-0 text-center fw-bold"  th:text="'Usuario: ' +${userSession}"></span>
+                      <a id="MnLogin" th:href="@{/}"
+                             class="nav-link px-0 align-middle p-lg-2">
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span class="ms-1 d-none d-sm-inline">Salir</span></a>
+
+                    </div>
+                  </div>
+                </nav>
+                <h2>📜 Usuarios</h2>
+                <div class="d-flex p-2 justify-content-lg-end">
+                <button th:if="${rolSession==1}" type="button" class="btn btn-secondary open" data-bs-toggle="modal" data-bs-target="#modalUsers">Agregar Usario</button>
+                </div>
+                <table class="table table-striped" id="tableUser">
                   <thead>
                   <th>ID</th>
                   <th>Username</th>
@@ -57,9 +70,8 @@
                     <span class="badge bg-danger" th:unless="${user.rol==1}">Contador</span>
                   </td>
                   <td>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#modalUsers" class="btn btn-primary">EDITAR</button>
-                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalUsers" th:href="@{/update/{id}(id=${user.id})}">Editar 2</a>
-                    <a class="btn btn-danger" th:href="@{/delete/{id}(id=${user.id})}">Eliminar</a>
+                    <a th:if="${rolSession==1}" class="btn btn-primary edit" data-bs-toggle="modal" data-bs-target="#modalUsers" th:href="@{/update/(id=${user.id})}"  >Editar</a>
+                    <a th:if="${rolSession==1}" class="btn btn-danger" th:href="@{/delete/{id}(id=${user.id})}">Eliminar</a>
                   </td>
                 </tr>
                 </tbody>
@@ -75,27 +87,28 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Crear Nuevo Usuario</h5>
+              <h5 class="modal-title">Modal Usuario</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
               <form  th:action="@{/save}" th:object="${user}" id="FormUser" name="FormUser" method="POST"  >
+                <input type="hidden" class="form-control" id="iduser" th:field="*{id}">
 
                 <div class="row">
                   <div class="col-6">
-                    <label for="staticEmail2" class="visually-hidden">Email</label>
-                    <input type="text" class="form-control" id="staticEmail2" th:field="*{username}" placeholder="email@example.com">
+                    <label for="username" class="visually-hidden">Email</label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="username" autocomplete="off" required>
                   </div>
                   <div class="col-6">
                     <label for="inputPassword2" class="visually-hidden">Password</label>
-                    <input type="password" class="form-control" id="inputPassword2" th:field="*{password}" placeholder="Password">
+                    <input type="password" class="form-control" id="inputPassword2" th:field="*{password}" placeholder="Password"  required>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-2"></div>
                   <div class="col-6 pt-2">
-                  <select th:field="*{rol}" class="form-select" aria-label="Seleccione un opción">
+                  <select th:field="*{rol}" id="rol" class="form-select" aria-label="Seleccione un opción" required>
                     <option value=1>Administrador</option>
                     <option value=2>Contador</option>
                   </select>
@@ -109,13 +122,44 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" form="FormUser" name="registrar" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="submit" form="FormUser" name="registrar" class="btn btn-primary">Guardar</button>
             </div>
           </div>
         </div>
       </div>
 
+      <script>
+        document.getElementById('tableUser').addEventListener('click',(e)=>{
+          if (e.target.classList.contains('edit')){
+            e.preventDefault();
+            let href = e.target.getAttribute('href');
+            fetch(href)
+                    .then(function(response) {
+                      if (response.ok) {
+                        return response.json();
+                      } else {
+                        throw new Error('Error response');
+                      }
+                    })
+                    .then(function(user) {
+                      document.getElementById('iduser').value = user.id;
+                      document.getElementById('username').value = user.username;
+                      document.getElementById('rol').value = user.rol;
+                    })
+                    .catch(function(error) {
+                      console.error('Error request:', error);
+                    });
+
+          }
+        })
+
+        document.addEventListener("click", (e)=>{
+          if(e.target.classList.contains("open")){
+            document.getElementById('FormUser').reset();
+          }
+        })
+      </script>
 
 
 </body>
