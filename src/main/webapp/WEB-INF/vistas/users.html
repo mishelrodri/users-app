@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Mangas</title>
+  <link rel="stylesheet" href="webjars/bootstrap/5.0.2/css/bootstrap.min.css" />
+  <script src="webjars/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+      <!-- INICIO DEL MENU -->
+
+      <div class="container-fluid p-0 min-vh-100">
+        <div class="d-flex text-center  w-100 h-100">
+          <div class="bg-dark" style="width: 20%; min-height: 100vh;" >
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white ">
+              <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto
+                  text-white text-decoration-none">
+                <span class="fs-5 d-none d-sm-inline">User App</span>
+              </a>
+              <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                <li class="nav-item"><a th:href="@{practicaMensajes}"
+                                        class="nav-link align-middle px-0"> <i class="fs-4 bi-chat"></i>
+                  <span class="ms-1 d-none d-sm-inline">Mensajes</span>
+                </a></li>
+                <li><a id="MnEstudiante" th:href="@{condiciones}"
+                       class="nav-link px-0 align-middle">
+                  <i class="fs-4 bi-people"></i>
+                  <span class="ms-1 d-none d-sm-inline">Condición</span></a>
+                </li>
+              </ul>
+              <hr>
+            </div>
+          </div>
+
+          <!-- FIN DEL MENU -->
+
+          <div style="width: 80%">
+            <div class="container-fluid">
+              <div class="p-2">
+                <h2>📜 Users</h2>
+                <table class="table table-striped">
+                  <thead>
+                  <th>ID</th>
+                  <th>Username</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                  </thead>
+                <tbody>
+                <tr th:each="user : ${userList}">
+                  <td th:text="${user.id}"></td>
+                  <td th:text="${user.username}"></td>
+                  <td>
+                    <span class="badge bg-primary" th:if="${user.rol==1}" >Administrador</span>
+                    <span class="badge bg-danger" th:unless="${user.rol==1}">Contador</span>
+                  </td>
+                  <td>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#modalUsers" class="btn btn-primary">EDITAR</button>
+                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalUsers" th:href="@{/update/{id}(id=${user.id})}">Editar 2</a>
+                    <a class="btn btn-danger" th:href="@{/delete/{id}(id=${user.id})}">Eliminar</a>
+                  </td>
+                </tr>
+                </tbody>
+                </table>
+            </div>
+          </div>
+          </div>
+
+      </div>
+      </div>
+
+      <div class="modal" id="modalUsers" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Crear Nuevo Usuario</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+              <form  th:action="@{/save}" th:object="${user}" id="FormUser" name="FormUser" method="POST"  >
+
+                <div class="row">
+                  <div class="col-6">
+                    <label for="staticEmail2" class="visually-hidden">Email</label>
+                    <input type="text" class="form-control" id="staticEmail2" th:field="*{username}" placeholder="email@example.com">
+                  </div>
+                  <div class="col-6">
+                    <label for="inputPassword2" class="visually-hidden">Password</label>
+                    <input type="password" class="form-control" id="inputPassword2" th:field="*{password}" placeholder="Password">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-2"></div>
+                  <div class="col-6 pt-2">
+                  <select th:field="*{rol}" class="form-select" aria-label="Seleccione un opción">
+                    <option value=1>Administrador</option>
+                    <option value=2>Contador</option>
+                  </select>
+                  </div>
+                  <div class="col-2"></div>
+
+                </div>
+
+
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" form="FormUser" name="registrar" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+</body>
+</html>
